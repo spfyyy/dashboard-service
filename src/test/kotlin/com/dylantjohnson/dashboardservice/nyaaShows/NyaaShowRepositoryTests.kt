@@ -71,24 +71,24 @@ class NyaaShowRepositoryTests {
                 """
     }
 
-    @Mock lateinit var nyaaHtmlRepository: NyaaHtmlRepository
+    @Mock private lateinit var mNyaaHtmlRepository: NyaaHtmlRepository
 
     private lateinit var mRepository: NyaaShowRepository
 
     @BeforeEach
     fun initialize() {
-        mRepository = NyaaShowRepository(nyaaHtmlRepository)
+        mRepository = NyaaShowRepository(mNyaaHtmlRepository)
     }
 
     @Test
     fun shouldReturnShowsFromHtml() {
-        given(nyaaHtmlRepository.getHtml()).willReturn(HTML)
+        given(mNyaaHtmlRepository.getHtml()).willReturn(HTML)
         assertThat(mRepository.getShows()).isEqualTo(SHOWS)
     }
 
     @Test
     fun shouldReturnNullFromBadHtml() {
-        given(nyaaHtmlRepository.getHtml()).willReturn(null)
+        given(mNyaaHtmlRepository.getHtml()).willReturn(null)
         assertThat(mRepository.getShows()).isEqualTo(null)
     }
 }

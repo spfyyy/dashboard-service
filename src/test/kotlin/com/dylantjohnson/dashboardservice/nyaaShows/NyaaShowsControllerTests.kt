@@ -28,18 +28,18 @@ class NyaaShowsControllerTests {
     @Mock private lateinit var mCredentialsHandler: CredentialsHandler
     @Mock private lateinit var mNyaaShowRepository: NyaaShowRepository
 
-    private lateinit var mController: NyaaShowsController
+    private lateinit var mNyaaShowsController: NyaaShowsController
 
     @BeforeEach
     fun initialize() {
-        mController = NyaaShowsController(mCredentialsHandler, mNyaaShowRepository)
+        mNyaaShowsController = NyaaShowsController(mCredentialsHandler, mNyaaShowRepository)
     }
 
     @Test
     fun shouldSendJsonListOfShows() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
         given(mNyaaShowRepository.getShows()).willReturn(SHOWS)
-        val response = mController.nyaaShows(USERNAME, PASSWORD)
+        val response = mNyaaShowsController.nyaaShows(USERNAME, PASSWORD)
         val fetchedShows: List<NyaaShow> = jacksonObjectMapper().readValue(response.body!!)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(fetchedShows).isEqualTo(SHOWS)
@@ -49,7 +49,7 @@ class NyaaShowsControllerTests {
     fun shouldSendJsonListOfShowsForNextPage() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
         given(mNyaaShowRepository.getShows(2)).willReturn(SHOWS)
-        val response = mController.nyaaShows(USERNAME, PASSWORD, 2)
+        val response = mNyaaShowsController.nyaaShows(USERNAME, PASSWORD, 2)
         val fetchedShows: List<NyaaShow> = jacksonObjectMapper().readValue(response.body!!)
         verify(mNyaaShowRepository).getShows(2)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -60,7 +60,7 @@ class NyaaShowsControllerTests {
     fun shouldSendNotFoundWhenErrorGettingShows() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
         given(mNyaaShowRepository.getShows()).willReturn(null)
-        val response = mController.nyaaShows(USERNAME, PASSWORD)
+        val response = mNyaaShowsController.nyaaShows(USERNAME, PASSWORD)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
         assertThat(response.body).isEqualTo("Unable to fetch shows")
     }
@@ -68,7 +68,7 @@ class NyaaShowsControllerTests {
     @Test
     fun shouldSendUnauthorizedWhenCredentialsAreInvalid() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(false)
-        val response = mController.nyaaShows(USERNAME, PASSWORD)
+        val response = mNyaaShowsController.nyaaShows(USERNAME, PASSWORD)
         assertThat(response.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
         assertThat(response.body).isEqualTo("Unauthorized")
     }

@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class NyaaShowsController(var credentialsHandler: CredentialsHandler, var nyaaShowRepository: NyaaShowRepository) {
-
     @PostMapping("/nyaaShows")
     fun nyaaShows(@RequestParam username: String? = null, @RequestParam password: String? = null,
-            @RequestParam page: Int = 1): ResponseEntity<String> {
+            @RequestParam page: Int? = 1): ResponseEntity<String> {
         if (!credentialsHandler.credentialsAreValid(username, password))
             return unauthorizedResponse()
-        val shows = nyaaShowRepository.getShows(page) ?: return errorResponse()
+        val shows = nyaaShowRepository.getShows(page ?: 1) ?: return errorResponse()
         return successResponse(jsonContaining(shows))
     }
 
