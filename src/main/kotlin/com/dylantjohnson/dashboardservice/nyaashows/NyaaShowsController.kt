@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-class NyaaShowsController(var credentialsHandler: CredentialsHandler, var showRepository: ShowRepository) {
+class NyaaShowsController(var credentialsHandler: CredentialsHandler, var nyaaShowRepository: NyaaShowRepository) {
 
     @PostMapping("/nyaaShows")
     fun nyaaShows(@RequestParam username: String? = null, @RequestParam password: String? = null,
             @RequestParam page: Int = 1): ResponseEntity<String> {
         if (!credentialsHandler.credentialsAreValid(username, password))
             return unauthorizedResponse()
-        val shows = showRepository.getShows(page) ?: return errorResponse()
+        val shows = nyaaShowRepository.getShows(page) ?: return errorResponse()
         return successResponse(jsonContaining(shows))
     }
 
@@ -26,5 +26,5 @@ class NyaaShowsController(var credentialsHandler: CredentialsHandler, var showRe
 
     private fun errorResponse() = ResponseEntity("Unable to fetch shows", HttpStatus.NOT_FOUND)
 
-    private fun jsonContaining(shows: List<Show>) = jacksonObjectMapper().writeValueAsString(shows)
+    private fun jsonContaining(shows: List<NyaaShow>) = jacksonObjectMapper().writeValueAsString(shows)
 }

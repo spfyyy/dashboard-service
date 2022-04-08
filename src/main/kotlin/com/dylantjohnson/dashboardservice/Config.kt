@@ -1,7 +1,8 @@
 package com.dylantjohnson.dashboardservice
 
 import com.dylantjohnson.dashboardservice.credentials.CredentialsHandler
-import com.dylantjohnson.dashboardservice.nyaashows.ShowRepository
+import com.dylantjohnson.dashboardservice.nyaashows.NyaaHtmlRepository
+import com.dylantjohnson.dashboardservice.nyaashows.NyaaShowRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -13,7 +14,7 @@ class Config {
     }
 
     @Bean
-    fun showRepository(): ShowRepository {
-        return ShowRepository()
+    fun nyaaShowRepository(): NyaaShowRepository {
+        return NyaaShowRepository(NyaaHtmlRepository())
     }
 }

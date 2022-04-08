@@ -2,8 +2,8 @@ package com.dylantjohnson.dashboardservice.nyaaShows
 
 import com.dylantjohnson.dashboardservice.credentials.CredentialsHandler
 import com.dylantjohnson.dashboardservice.nyaashows.NyaaShowsController
-import com.dylantjohnson.dashboardservice.nyaashows.Show
-import com.dylantjohnson.dashboardservice.nyaashows.ShowRepository
+import com.dylantjohnson.dashboardservice.nyaashows.NyaaShow
+import com.dylantjohnson.dashboardservice.nyaashows.NyaaShowRepository
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
@@ -21,26 +21,26 @@ class NyaaShowsControllerTests {
     companion object {
         private const val USERNAME = "username"
         private const val PASSWORD = "password"
-        private val SHOWS = listOf(Show("random show", "random link"),
-                Show("other show", "other link"))
+        private val SHOWS = listOf(NyaaShow("random show", "random link"),
+                NyaaShow("other show", "other link"))
     }
 
     @Mock private lateinit var mCredentialsHandler: CredentialsHandler
-    @Mock private lateinit var mShowRepository: ShowRepository
+    @Mock private lateinit var mNyaaShowRepository: NyaaShowRepository
 
     private lateinit var mController: NyaaShowsController
 
     @BeforeEach
     fun initialize() {
-        mController = NyaaShowsController(mCredentialsHandler, mShowRepository)
+        mController = NyaaShowsController(mCredentialsHandler, mNyaaShowRepository)
     }
 
     @Test
     fun shouldSendJsonListOfShows() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
-        given(mShowRepository.getShows()).willReturn(SHOWS)
+        given(mNyaaShowRepository.getShows()).willReturn(SHOWS)
         val response = mController.nyaaShows(USERNAME, PASSWORD)
-        val fetchedShows: List<Show> = jacksonObjectMapper().readValue(response.body!!)
+        val fetchedShows: List<NyaaShow> = jacksonObjectMapper().readValue(response.body!!)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(fetchedShows).isEqualTo(SHOWS)
     }
@@ -48,10 +48,10 @@ class NyaaShowsControllerTests {
     @Test
     fun shouldSendJsonListOfShowsForNextPage() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
-        given(mShowRepository.getShows(2)).willReturn(SHOWS)
+        given(mNyaaShowRepository.getShows(2)).willReturn(SHOWS)
         val response = mController.nyaaShows(USERNAME, PASSWORD, 2)
-        val fetchedShows: List<Show> = jacksonObjectMapper().readValue(response.body!!)
-        verify(mShowRepository).getShows(2)
+        val fetchedShows: List<NyaaShow> = jacksonObjectMapper().readValue(response.body!!)
+        verify(mNyaaShowRepository).getShows(2)
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(fetchedShows).isEqualTo(SHOWS)
     }
@@ -59,7 +59,7 @@ class NyaaShowsControllerTests {
     @Test
     fun shouldSendNotFoundWhenErrorGettingShows() {
         given(mCredentialsHandler.credentialsAreValid(USERNAME, PASSWORD)).willReturn(true)
-        given(mShowRepository.getShows()).willReturn(null)
+        given(mNyaaShowRepository.getShows()).willReturn(null)
         val response = mController.nyaaShows(USERNAME, PASSWORD)
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
         assertThat(response.body).isEqualTo("Unable to fetch shows")

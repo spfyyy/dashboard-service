@@ -1,7 +1,7 @@
 package com.dylantjohnson.dashboardservice.nyaashows
 
-open class ShowRepository {
-    open fun getShows(page: Int = 1): List<Show>? {
+open class NyaaHtmlRepository {
+    open fun getHtml(page: Int = 1): String? {
         throw UnsupportedOperationException()
     }
 }
