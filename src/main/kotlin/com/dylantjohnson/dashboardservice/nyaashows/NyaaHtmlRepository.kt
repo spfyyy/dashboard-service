@@ -16,7 +16,6 @@ class NyaaHtmlRepository(var config: Config, var utils: Utils) {
                 null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             null
         }
     }
