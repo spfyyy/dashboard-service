@@ -1,20 +1,17 @@
 package com.dylantjohnson.dashboardservice.nyaashows
 
 import com.dylantjohnson.dashboardservice.Config
+import com.dylantjohnson.dashboardservice.Utils
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 @Component
-class NyaaHtmlRepository(var config: Config) {
+class NyaaHtmlRepository(var config: Config, var utils: Utils) {
     fun getHtml(page: Int = 1): String? {
         return try {
-            val connection = URL(config.nyaaBaseUrl.with(page)).openConnection() as HttpsURLConnection
-            if (connection.responseCode == HttpStatus.OK.value()) {
-                stringFrom(connection)
+            val response = utils.responseFrom(config.nyaaBaseUrl.with(page))
+            if (response.statusCode == HttpStatus.OK) {
+                response.body
             } else {
                 null
             }
@@ -24,15 +21,13 @@ class NyaaHtmlRepository(var config: Config) {
         }
     }
 
-    private fun stringFrom(connection: HttpsURLConnection): String {
-        return BufferedReader(InputStreamReader(connection.inputStream)).readText()
-    }
-
-    fun String.with(page: Int): String {
-        return if (contains("?")) {
-            "$this&p=$page"
-        } else {
-            "$this?&p=$page"
+    companion object {
+        fun String.with(page: Int): String {
+            return if (contains("?")) {
+                "$this&p=$page"
+            } else {
+                "$this?p=$page"
+            }
         }
     }
 }
