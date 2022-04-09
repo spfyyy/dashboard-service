@@ -14,19 +14,11 @@ class TorrentsController(var credentialsHandler: CredentialsHandler, var torrent
             @RequestParam magnetUri: String?): ResponseEntity<String> {
         if (!credentialsHandler.credentialsAreValid(username, password)) return unauthorizedResponse()
         if (magnetUri == null) return badRequestResponse()
-        return if (torrentAddedSuccessfully(magnetUri)) {
-            successfulResponse()
-        } else {
-            unsuccessfulResponse()
-        }
-    }
-
-    private fun torrentAddedSuccessfully(magnetUri: String): Boolean {
         return try {
             torrentsRepository.addTorrent(magnetUri)
-            true
+            successfulResponse()
         } catch (e: TorrentsRepository.AddTorrentException) {
-            false
+            unsuccessfulResponse()
         }
     }
 
