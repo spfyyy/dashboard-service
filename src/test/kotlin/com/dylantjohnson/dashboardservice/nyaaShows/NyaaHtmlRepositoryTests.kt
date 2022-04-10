@@ -52,7 +52,7 @@ class NyaaHtmlRepositoryTests {
     @Test
     fun shouldReturnNullIfError() {
         given(mConfig.nyaaBaseUrl).willReturn(BASE_URL)
-        given(mUtils.responseFrom("$BASE_URL?p=1")).willThrow(RuntimeException())
+        given(mUtils.responseFrom("$BASE_URL?p=1")).willReturn(null)
         val html = mNyaaHtmlRepository.getHtml(1)
         assertThat(html).isNull()
     }

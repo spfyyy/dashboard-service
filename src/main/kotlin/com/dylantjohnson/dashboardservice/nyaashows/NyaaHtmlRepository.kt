@@ -8,25 +8,13 @@ import org.springframework.stereotype.Component
 @Component
 class NyaaHtmlRepository(var config: Config, var utils: Utils) {
     fun getHtml(page: Int = 1): String? {
-        return try {
-            val response = utils.responseFrom(config.nyaaBaseUrl.with(page))
-            if (response.statusCode == HttpStatus.OK) {
-                response.body
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            null
-        }
+        val response = utils.responseFrom(config.nyaaBaseUrl.with(page)) ?: return null
+        return if (response.statusCode == HttpStatus.OK) response.body else null
     }
 
     companion object {
         fun String.with(page: Int): String {
-            return if (contains("?")) {
-                "$this&p=$page"
-            } else {
-                "$this?p=$page"
-            }
+            return if (contains("?")) "$this&p=$page" else "$this?p=$page"
         }
     }
 }
